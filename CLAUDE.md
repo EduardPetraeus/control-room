@@ -9,8 +9,10 @@ Control Room is a FastAPI + HTMX + Tailwind dashboard for solo developers managi
 - Branch policy: all work on feature branches, never commit directly to main
 
 ## Scope
-- Dashboard pages: /, /tasks, /projects, /metrics
-- Collectors: git subprocess, YAML tasks, STATUS.md parser, GitHub CLI
+- Dashboard pages: /, /fleet, /queue, /tasks, /costs, /projects, /metrics
+- JSON API: /agent/master/plan, /assign, /status, /escalate
+- Collectors: git subprocess, YAML tasks, STATUS.md parser, GitHub CLI, heartbeat, governance, cost, queue, task_engine
+- Framework integrations: ai-governance-framework (via sys.path), ai-project-management (pip editable)
 - Data: in-memory cache (30s TTL), no database
 - Templates: Jinja2 + HTMX partials with dark theme
 
@@ -37,13 +39,13 @@ Control Room is a FastAPI + HTMX + Tailwind dashboard for solo developers managi
 ## Project Structure
 ```
 src/control_room/
-  app.py          — FastAPI factory
+  app.py          — FastAPI factory (7 HTML routers + 1 JSON API router)
   config.py       — Pydantic config models
   __main__.py     — CLI entry point
-  models/         — Pydantic data models
-  collectors/     — Data collection (git, YAML, GitHub)
-  routes/         — FastAPI routers
-  templates/      — Jinja2 templates
+  models/         — Pydantic data models (activity, project, task, metrics, heartbeat, governance, cost, queue, orchestration)
+  collectors/     — Data collection (git, YAML, GitHub, heartbeat, governance, cost, queue, task_engine, aggregator)
+  routes/         — FastAPI routers (dashboard, fleet, queue, tasks, costs, projects, metrics, orchestration)
+  templates/      — Jinja2 templates + HTMX partials
   static/         — CSS
 tests/
   test_collectors/
@@ -57,9 +59,11 @@ tests/
 - Green: #00ff88, Amber: #ffaa00, Red: #ff4444
 
 ## project_context
-- Solo dev dashboard, dogfooding the Agentic Engineering OS
-- v0.1.0 shipped — all 4 pages, 52 tests, governance applied
-- Next: showcase in agentic-engineering docs, explore plugin system
+- Fleet command center, dogfooding the Agentic Engineering OS
+- v0.1.0 shipped — 4 dashboard pages, 52 tests
+- v0.2.0 on feature branch — 7 pages + 4 API endpoints, 172 tests, framework integration
+- Governance layers mapped: L5 (Observability), L6 (Human-in-the-loop), L7 (Orchestration)
+- Next: merge v0.2.0, build heartbeat writer hook, live test with parallel sessions
 
 ## security_protocol
 - No API keys or tokens in code or config.yaml
