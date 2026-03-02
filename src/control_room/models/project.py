@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
+from control_room.models.governance import RepoGovernance
+
 
 class StatusInfo(BaseModel):
     """Parsed status information extracted from STATUS.md, README.md, or DOGFOOD.md."""
@@ -29,3 +31,4 @@ class ProjectStatus(BaseModel):
     status_color: str = "gray"  # green, amber, red, gray
     commits_30d: int = 0
     last_commit_date: str | None = None
+    governance: RepoGovernance | None = None

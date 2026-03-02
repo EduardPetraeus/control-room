@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Fleet — Control Room{% endblock %}
+{% block content %}
+<div class="space-y-8">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-cr-green">Fleet Command</h1>
+        <span class="text-sm text-cr-muted">{{ fleet.sessions | length }} sessions</span>
+    </div>
+
+    <!-- Fleet grid with HTMX auto-refresh -->
+    <div id="fleet-grid" hx-get="/partials/fleet-grid" hx-trigger="every 10s" hx-swap="innerHTML">
+        {% include "partials/fleet-grid.html" %}
+    </div>
+</div>
+{% endblock %}

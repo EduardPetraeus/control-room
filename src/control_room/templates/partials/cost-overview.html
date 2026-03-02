@@ -1,0 +1,102 @@
+<!-- Budget alert banner -->
+{% if costs.budget_alert %}
+<div class="bg-cr-red/10 border border-cr-red/30 rounded-lg p-4 mb-6">
+    <p class="text-cr-red font-semibold text-sm">Budget alert: approaching limit ({{ "%.1f"|format(costs.budget_used_pct) }}% used)</p>
+</div>
+{% endif %}
+
+<!-- Stats bar -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+    <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+        <p class="text-2xl font-bold text-cr-green">${{ "%.2f"|format(costs.total_cost_usd) }}</p>
+        <p class="text-xs text-cr-muted mt-1">Total Cost</p>
+    </div>
+    <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+        <p class="text-2xl font-bold text-cr-text">{{ "{:,}".format(costs.total_tokens) }}</p>
+        <p class="text-xs text-cr-muted mt-1">Total Tokens</p>
+    </div>
+    <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+        <p class="text-2xl font-bold
+            {% if costs.budget_used_pct >= 80 %}text-cr-red
+            {% elif costs.budget_used_pct >= 60 %}text-cr-amber
+            {% else %}text-cr-green{% endif %}">{{ "%.1f"|format(costs.budget_used_pct) }}%</p>
+        <p class="text-xs text-cr-muted mt-1">Budget Used</p>
+    </div>
+    <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+        <p class="text-2xl font-bold text-cr-text">${{ "%.2f"|format(costs.budget_limit_usd) }}</p>
+        <p class="text-xs text-cr-muted mt-1">Budget Limit</p>
+    </div>
+</div>
+
+<!-- Budget progress bar -->
+<div class="bg-cr-card border border-cr-border rounded-lg p-4 mb-6">
+    <div class="flex justify-between mb-2">
+        <span class="text-sm text-cr-muted">Budget Progress</span>
+        <span class="text-sm text-cr-text">${{ "%.2f"|format(costs.total_cost_usd) }} / ${{ "%.2f"|format(costs.budget_limit_usd) }}</span>
+    </div>
+    <div class="w-full bg-cr-bg rounded-full h-3">
+        {% set bar_width = [costs.budget_used_pct, 100] | min %}
+        <div class="h-3 rounded-full transition-all
+            {% if costs.budget_used_pct >= 80 %}bg-cr-red
+            {% elif costs.budget_used_pct >= 60 %}bg-cr-amber
+            {% else %}bg-cr-green{% endif %}"
+            style="width: {{ "%.1f"|format(bar_width) }}%"></div>
+    </div>
+</div>
+
+<!-- Cost by model breakdown -->
+{% if costs.cost_by_model %}
+<div class="mb-6">
+    <h2 class="text-lg font-semibold text-cr-text mb-4">Cost by Model</h2>
+    <div class="bg-cr-card border border-cr-border rounded-lg p-4 space-y-3">
+        {% set max_model_cost = costs.cost_by_model.values() | max if costs.cost_by_model else 1 %}
+        {% for model, model_cost in costs.cost_by_model.items() | sort(attribute='1', reverse=true) %}
+        <div class="flex items-center gap-3">
+            <span class="text-xs text-cr-muted w-40 truncate font-mono">{{ model }}</span>
+            <div class="flex-1 h-5 bg-cr-bg rounded overflow-hidden">
+                {% if max_model_cost > 0 %}
+                <div class="h-full rounded bg-cr-green/40"
+                    style="width: {{ (model_cost / max_model_cost * 100) | round }}%">
+                </div>
+                {% endif %}
+            </div>
+            <span class="text-xs text-cr-text w-16 text-right">${{ "%.2f"|format(model_cost) }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Session costs table -->
+{% if costs.sessions %}
+<div>
+    <h2 class="text-lg font-semibold text-cr-text mb-4">Session Costs</h2>
+    <div class="bg-cr-card border border-cr-border rounded-lg overflow-hidden">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b border-cr-border">
+                    <th class="text-left text-xs text-cr-muted uppercase tracking-wider p-3">Name</th>
+                    <th class="text-left text-xs text-cr-muted uppercase tracking-wider p-3">Model</th>
+                    <th class="text-right text-xs text-cr-muted uppercase tracking-wider p-3">Tokens</th>
+                    <th class="text-right text-xs text-cr-muted uppercase tracking-wider p-3">Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in costs.sessions | sort(attribute='cost_usd', reverse=true) %}
+                <tr class="border-b border-cr-border/50 hover:bg-cr-bg/50">
+                    <td class="p-3 text-cr-text font-mono text-xs truncate max-w-[200px]" title="{{ session.name }}">{{ session.name }}</td>
+                    <td class="p-3 text-cr-muted text-xs">{{ session.model or "unknown" }}</td>
+                    <td class="p-3 text-cr-text text-xs text-right">{{ "{:,}".format(session.total_tokens) }}</td>
+                    <td class="p-3 text-cr-green text-xs text-right font-semibold">${{ "%.2f"|format(session.cost_usd) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="bg-cr-card border border-cr-border rounded-lg p-8 text-center">
+    <p class="text-cr-muted text-sm">No cost data available.</p>
+    <p class="text-cr-muted text-xs mt-2">Cost data is collected from heartbeat files and COST_LOG.md in repos.</p>
+</div>
+{% endif %}

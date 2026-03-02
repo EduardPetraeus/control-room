@@ -2,16 +2,31 @@ from __future__ import annotations
 
 import logging
 import time
+from pathlib import Path
 from typing import TYPE_CHECKING
 
+from control_room.collectors.cost import build_cost_summary
 from control_room.collectors.git_log import (
     get_commit_stats,
     get_current_branch,
     get_last_commit_date,
 )
+from control_room.collectors.governance import get_drift_report, get_health_score
+from control_room.collectors.heartbeat import collect_fleet_status
 from control_room.collectors.status_md import get_all_status_info
+from control_room.collectors.task_engine import get_all_critical_paths, get_fleet_next_tasks
 from control_room.config import AppConfig
+from control_room.models.cost import CostSummary
+from control_room.models.governance import (
+    DriftAlert,
+    DriftReport,
+    GovernanceHealth,
+    HealthCheck,
+    RepoGovernance,
+)
+from control_room.models.heartbeat import FleetStatus
 from control_room.models.project import ProjectStatus, StatusInfo
+from control_room.models.queue import BlockerQueue
 
 if TYPE_CHECKING:
     from control_room.models.activity import ActivityEvent, GitHubProjectItem
@@ -51,6 +66,79 @@ class DataAggregator:
     def __init__(self, config: AppConfig) -> None:
         self.config = config
         self.cache = DataCache(ttl_seconds=config.server.cache_ttl_seconds)
+
+    def get_fleet_status(self) -> FleetStatus:
+        """Get fleet status from heartbeat files."""
+        cached = self.cache.get("fleet_status")
+        if cached is not None:
+            return cached  # type: ignore[return-value]
+
+        repo_paths = [Path(r.path) for r in self.config.repos]
+        fleet = collect_fleet_status(repo_paths)
+        self.cache.set("fleet_status", fleet)
+        return fleet
+
+    def get_blocker_queue(self) -> BlockerQueue:
+        """Get prioritized blocker queue."""
+        from control_room.collectors.queue import collect_blocker_queue
+
+        cached = self.cache.get("blocker_queue")
+        if cached is not None:
+            return cached  # type: ignore[return-value]
+        queue = collect_blocker_queue(self.config.repos)
+        self.cache.set("blocker_queue", queue)
+        return queue
+
+    def _collect_governance(self, repo_path: str, repo_name: str) -> RepoGovernance:
+        """Collect governance health score and drift data for a repo.
+
+        All calls are fault-tolerant: failures result in safe defaults.
+        """
+        path = Path(repo_path)
+        health_raw = get_health_score(path)
+
+        # Convert raw health dict to structured model
+        checks = [
+            HealthCheck(
+                name=c.get("name", ""),
+                passed=c.get("passed", False),
+                points=c.get("points", 0),
+            )
+            for c in health_raw.get("checks", [])
+        ]
+        health = GovernanceHealth(
+            score=health_raw.get("score", 0),
+            level=health_raw.get("level", 0),
+            level_label=health_raw.get("level_label", "Unknown"),
+            checks=checks,
+        )
+
+        # Drift detection: compare repo's CLAUDE.md against governance template
+        template_path = (
+            Path.home() / "Github repos" / "ai-governance-framework" / "templates" / "CLAUDE.md"
+        )
+        drift_raw = get_drift_report(template_path, path)
+
+        drift_sections = [
+            DriftAlert(
+                section=d.get("section", ""),
+                direction=d.get("direction", ""),
+                ratio=d.get("ratio", 0.0),
+            )
+            for d in drift_raw.get("drift_sections", [])
+        ]
+        drift = DriftReport(
+            aligned=drift_raw.get("aligned", True),
+            missing_sections=drift_raw.get("missing_sections", []),
+            drift_sections=drift_sections,
+            recommendations=drift_raw.get("recommendations", []),
+        )
+
+        return RepoGovernance(
+            repo_name=repo_name,
+            health=health,
+            drift=drift,
+        )
 
     def _determine_status_color(self, project: ProjectStatus) -> str:
         """Determine status color based on test results and activity.
@@ -114,6 +202,10 @@ class DataAggregator:
                 commits_30d=stats.total_commits,
                 last_commit_date=last_date,
             )
+
+            # Collect governance data (health score + drift)
+            project.governance = self._collect_governance(repo.path, repo.name)
+
             project.status_color = self._determine_status_color(project)
             projects.append(project)
 
@@ -279,6 +371,30 @@ class DataAggregator:
 
         self.cache.set("activity_feed", events)
         return events
+
+    def get_cost_summary(self) -> CostSummary:
+        """Get aggregated cost data."""
+        cached = self.cache.get("cost_summary")
+        if cached is not None:
+            return cached  # type: ignore[return-value]
+        budget = getattr(self.config, "budget_limit_usd", 50.0)
+        summary = build_cost_summary(self.config.repos, budget)
+        self.cache.set("cost_summary", summary)
+        return summary
+
+    def get_critical_paths(self) -> dict[str, list[str]]:
+        """Get critical paths for all repos."""
+        cached = self.cache.get("critical_paths")
+        if cached is not None:
+            return cached  # type: ignore[return-value]
+        paths = get_all_critical_paths(self.config.repos)
+        self.cache.set("critical_paths", paths)
+        return paths
+
+    def get_next_tasks(self, agent_type: str | None = None) -> list[dict]:
+        """Get next available tasks across all repos."""
+        # Don't cache this — it should always be fresh for agent assignment
+        return get_fleet_next_tasks(self.config.repos, agent_type)
 
     def get_tasks_by_column(self) -> dict[str, list[UnifiedTask]]:
         """Group tasks into kanban columns."""

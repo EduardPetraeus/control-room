@@ -8,6 +8,14 @@
        class="flex items-center gap-2 px-3 py-2 rounded text-sm {% if page == 'dashboard' %}bg-cr-border text-cr-green{% else %}text-cr-muted hover:text-cr-text hover:bg-cr-bg{% endif %}">
         <span>&#9632;</span> Dashboard
     </a>
+    <a href="/fleet"
+       class="flex items-center gap-2 px-3 py-2 rounded text-sm {% if page == 'fleet' %}bg-cr-border text-cr-green{% else %}text-cr-muted hover:text-cr-text hover:bg-cr-bg{% endif %}">
+        <span>&#9678;</span> Fleet
+    </a>
+    <a href="/queue"
+       class="flex items-center gap-2 px-3 py-2 rounded text-sm {% if page == 'queue' %}bg-cr-border text-cr-green{% else %}text-cr-muted hover:text-cr-text hover:bg-cr-bg{% endif %}">
+        <span>&#9888;</span> Queue
+    </a>
     <a href="/tasks"
        class="flex items-center gap-2 px-3 py-2 rounded text-sm {% if page == 'tasks' %}bg-cr-border text-cr-green{% else %}text-cr-muted hover:text-cr-text hover:bg-cr-bg{% endif %}">
         <span>&#9654;</span> Tasks
@@ -20,12 +28,22 @@
        class="flex items-center gap-2 px-3 py-2 rounded text-sm {% if page == 'metrics' %}bg-cr-border text-cr-green{% else %}text-cr-muted hover:text-cr-text hover:bg-cr-bg{% endif %}">
         <span>&#9650;</span> Metrics
     </a>
+    <a href="/costs"
+       class="flex items-center gap-2 px-3 py-2 rounded text-sm {% if page == 'costs' %}bg-cr-border text-cr-green{% else %}text-cr-muted hover:text-cr-text hover:bg-cr-bg{% endif %}">
+        <span>&#36;</span> Costs
+    </a>
 </nav>
 
 <!-- Mobile nav -->
 <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-cr-card border-t border-cr-border flex justify-around py-2 z-50">
     <a href="/" class="text-xs {% if page == 'dashboard' %}text-cr-green{% else %}text-cr-muted{% endif %} text-center">
         <div>&#9632;</div>Dashboard
+    </a>
+    <a href="/fleet" class="text-xs {% if page == 'fleet' %}text-cr-green{% else %}text-cr-muted{% endif %} text-center">
+        <div>&#9678;</div>Fleet
+    </a>
+    <a href="/queue" class="text-xs {% if page == 'queue' %}text-cr-green{% else %}text-cr-muted{% endif %} text-center">
+        <div>&#9888;</div>Queue
     </a>
     <a href="/tasks" class="text-xs {% if page == 'tasks' %}text-cr-green{% else %}text-cr-muted{% endif %} text-center">
         <div>&#9654;</div>Tasks
@@ -35,5 +53,8 @@
     </a>
     <a href="/metrics" class="text-xs {% if page == 'metrics' %}text-cr-green{% else %}text-cr-muted{% endif %} text-center">
         <div>&#9650;</div>Metrics
+    </a>
+    <a href="/costs" class="text-xs {% if page == 'costs' %}text-cr-green{% else %}text-cr-muted{% endif %} text-center">
+        <div>&#36;</div>Costs
     </a>
 </nav>

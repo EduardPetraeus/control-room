@@ -1,0 +1,114 @@
+<!-- Fleet stats bar -->
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
+    <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+        <p class="text-2xl font-bold text-cr-green">{{ fleet.total_active }}</p>
+        <p class="text-xs text-cr-muted mt-1">Active</p>
+    </div>
+    <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+        <p class="text-2xl font-bold text-cr-amber">{{ fleet.total_blocked }}</p>
+        <p class="text-xs text-cr-muted mt-1">Blocked</p>
+    </div>
+    <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+        <p class="text-2xl font-bold text-gray-400">{{ fleet.total_idle }}</p>
+        <p class="text-xs text-cr-muted mt-1">Idle</p>
+    </div>
+    <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+        <p class="text-2xl font-bold text-cr-green">{{ fleet.total_completed }}</p>
+        <p class="text-xs text-cr-muted mt-1">Completed</p>
+    </div>
+    <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+        <p class="text-2xl font-bold text-cr-red">{{ fleet.total_failed }}</p>
+        <p class="text-xs text-cr-muted mt-1">Failed</p>
+    </div>
+    <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+        <p class="text-2xl font-bold text-cr-text">${{ "%.2f"|format(fleet.fleet_cost_usd) }}</p>
+        <p class="text-xs text-cr-muted mt-1">Total Cost</p>
+    </div>
+    <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+        <p class="text-2xl font-bold text-cr-text">{{ "{:,}".format(fleet.fleet_tokens) }}</p>
+        <p class="text-xs text-cr-muted mt-1">Tokens</p>
+    </div>
+</div>
+
+<!-- Session cards grid -->
+{% if fleet.sessions %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for session in fleet.sessions %}
+    <div class="bg-cr-card border border-cr-border rounded-lg p-4 hover:border-opacity-60 transition-colors
+        {% if session.status.value == 'blocked' %}border-cr-amber{% endif %}">
+        <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-sm truncate" title="{{ session.session_id }}">
+                {{ session.session_id[:12] }}...
+            </h3>
+            <!-- Status dot -->
+            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0
+                {% if session.status.value == 'active' %}bg-cr-green
+                {% elif session.status.value == 'blocked' %}bg-cr-amber
+                {% elif session.status.value == 'idle' %}bg-gray-500
+                {% elif session.status.value == 'completed' %}bg-cr-green
+                {% elif session.status.value == 'failed' %}bg-cr-red
+                {% else %}bg-gray-600{% endif %}"></span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+            <div class="flex justify-between">
+                <span class="text-cr-muted">Repo</span>
+                <span class="text-cr-text font-mono truncate ml-2">{{ session.repo }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-cr-muted">Branch</span>
+                <span class="text-cr-text font-mono truncate ml-2">{{ session.branch }}</span>
+            </div>
+            {% if session.task %}
+            <div>
+                <span class="text-cr-muted">Task</span>
+                <p class="text-cr-text mt-0.5 line-clamp-2">{{ session.task }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Progress bar -->
+            <div>
+                <div class="flex justify-between mb-1">
+                    <span class="text-cr-muted">Progress</span>
+                    <span class="text-cr-text">{{ "%.0f"|format(session.progress * 100) }}%</span>
+                </div>
+                <div class="w-full bg-cr-bg rounded-full h-1.5">
+                    <div class="h-1.5 rounded-full
+                        {% if session.status.value == 'completed' %}bg-cr-green
+                        {% elif session.status.value == 'failed' %}bg-cr-red
+                        {% elif session.status.value == 'blocked' %}bg-cr-amber
+                        {% else %}bg-cr-green{% endif %}"
+                        style="width: {{ "%.0f"|format(session.progress * 100) }}%"></div>
+                </div>
+            </div>
+
+            {% if session.blocker %}
+            <div class="bg-cr-amber/10 border border-cr-amber/30 rounded p-2 mt-2">
+                <span class="text-cr-amber text-xs font-medium">Blocker:</span>
+                <p class="text-cr-amber/80 text-xs mt-0.5">{{ session.blocker }}</p>
+            </div>
+            {% endif %}
+
+            <div class="flex justify-between pt-1 border-t border-cr-border">
+                <span class="text-cr-muted">${{ "%.2f"|format(session.cost_usd) }}</span>
+                <span class="text-cr-muted">{{ "{:,}".format(session.tokens_used) }} tokens</span>
+            </div>
+            {% if session.model %}
+            <div class="flex justify-between">
+                <span class="text-cr-muted">Model</span>
+                <span class="text-cr-text">{{ session.model }}</span>
+            </div>
+            {% endif %}
+            <div class="text-right">
+                <span class="text-cr-muted text-xs">{{ session.timestamp.strftime('%H:%M:%S') }}</span>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="bg-cr-card border border-cr-border rounded-lg p-8 text-center">
+    <p class="text-cr-muted text-sm">No active Claude Code sessions detected.</p>
+    <p class="text-cr-muted text-xs mt-2">Sessions write heartbeat files to repos automatically.</p>
+</div>
+{% endif %}

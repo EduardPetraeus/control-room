@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Costs — Control Room{% endblock %}
+{% block content %}
+<div class="space-y-8">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-cr-green">Cost Tracking</h1>
+        <span class="text-sm text-cr-muted">{{ costs.sessions | length }} entries</span>
+    </div>
+
+    <!-- Cost overview with HTMX auto-refresh -->
+    <div id="cost-overview" hx-get="/partials/cost-overview" hx-trigger="every 30s" hx-swap="innerHTML">
+        {% include "partials/cost-overview.html" %}
+    </div>
+</div>
+{% endblock %}

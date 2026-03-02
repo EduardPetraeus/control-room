@@ -51,14 +51,22 @@ def create_app() -> FastAPI:
     app.state.templates = templates
 
     # Routes
+    from control_room.routes.costs import router as costs_router
     from control_room.routes.dashboard import router as dashboard_router
+    from control_room.routes.fleet import router as fleet_router
     from control_room.routes.metrics import router as metrics_router
+    from control_room.routes.orchestration import router as orchestration_router
     from control_room.routes.projects import router as projects_router
+    from control_room.routes.queue import router as queue_router
     from control_room.routes.tasks import router as tasks_router
 
+    app.include_router(costs_router)
     app.include_router(dashboard_router)
+    app.include_router(fleet_router)
     app.include_router(metrics_router)
+    app.include_router(orchestration_router)
     app.include_router(projects_router)
+    app.include_router(queue_router)
     app.include_router(tasks_router)
 
     return app
