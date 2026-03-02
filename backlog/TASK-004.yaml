@@ -1,6 +1,6 @@
 id: TASK-004
 title: "Add docstrings to all public test functions"
-status: ready
+status: done
 priority: low
 agent: code
 review: auto-merge

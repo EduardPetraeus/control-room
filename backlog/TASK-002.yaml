@@ -1,6 +1,6 @@
 id: TASK-002
 title: "Add CI/CD pipeline with GitHub Actions"
-status: ready
+status: done
 priority: high
 agent: code
 review: human-review

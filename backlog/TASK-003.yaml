@@ -1,6 +1,6 @@
 id: TASK-003
 title: "Add pre-commit hooks"
-status: ready
+status: done
 priority: medium
 agent: code
 review: auto-merge
