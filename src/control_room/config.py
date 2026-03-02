@@ -41,6 +41,7 @@ class RepoConfig(BaseModel):
     @field_validator("path", mode="before")
     @classmethod
     def expand_path(cls, v: str) -> str:
+        """Expand ~ and resolve the repo path to an absolute path."""
         return str(Path(os.path.expanduser(v)).resolve())
 
 

@@ -13,6 +13,7 @@ from control_room.collectors.github import (
 class TestGetProjectItems:
     @patch("control_room.collectors.github.subprocess.run")
     def test_parses_project_items(self, mock_run):
+        """Verify project items are parsed from gh CLI JSON output."""
         mock_run.return_value = MagicMock(
             returncode=0,
             stdout=json.dumps(
@@ -41,18 +42,21 @@ class TestGetProjectItems:
 
     @patch("control_room.collectors.github.subprocess.run")
     def test_handles_empty_response(self, mock_run):
+        """Verify empty items list returns an empty result."""
         mock_run.return_value = MagicMock(returncode=0, stdout='{"items": []}', stderr="")
         items = get_project_items()
         assert items == []
 
     @patch("control_room.collectors.github.subprocess.run")
     def test_handles_failure(self, mock_run):
+        """Verify non-zero returncode returns an empty list."""
         mock_run.return_value = MagicMock(returncode=1, stdout="", stderr="auth required")
         items = get_project_items()
         assert items == []
 
     @patch("control_room.collectors.github.subprocess.run")
     def test_handles_timeout(self, mock_run):
+        """Verify timeout exception returns an empty list."""
         import subprocess
 
         mock_run.side_effect = subprocess.TimeoutExpired("gh", 30)
@@ -63,6 +67,7 @@ class TestGetProjectItems:
 class TestGetRepoEvents:
     @patch("control_room.collectors.github.subprocess.run")
     def test_parses_events(self, mock_run):
+        """Verify repo events are parsed into typed event objects."""
         mock_run.return_value = MagicMock(
             returncode=0,
             stdout=json.dumps(
@@ -85,6 +90,7 @@ class TestGetRepoEvents:
 
     @patch("control_room.collectors.github.subprocess.run")
     def test_handles_api_failure(self, mock_run):
+        """Verify API failure returns an empty event list."""
         mock_run.return_value = MagicMock(returncode=1, stdout="", stderr="error")
         events = get_repo_events_sync("owner", "repo")
         assert events == []
@@ -92,9 +98,11 @@ class TestGetRepoEvents:
 
 class TestBuildEventTitle:
     def test_push_event(self):
+        """Verify PushEvent title includes commit count."""
         assert "3 commits" in _build_event_title("PushEvent", {"size": 3})
 
     def test_issue_event(self):
+        """Verify IssuesEvent title includes action and issue title."""
         result = _build_event_title(
             "IssuesEvent",
             {"action": "opened", "issue": {"title": "Bug report"}},
@@ -103,5 +111,6 @@ class TestBuildEventTitle:
         assert "Bug report" in result
 
     def test_unknown_event(self):
+        """Verify unknown event type falls back to event type name."""
         result = _build_event_title("SomeNewEvent", {})
         assert result == "SomeNewEvent"

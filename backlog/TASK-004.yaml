@@ -1,0 +1,11 @@
+id: TASK-004
+title: "Add docstrings to all public test functions"
+status: ready
+priority: low
+agent: code
+review: auto-merge
+created: "2026-03-02"
+tags: [quality, standards]
+definition_of_done:
+  - "All public test functions have docstrings"
+  - "ai-standards docstring check passes"

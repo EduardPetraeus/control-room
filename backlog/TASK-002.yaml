@@ -1,0 +1,12 @@
+id: TASK-002
+title: "Add CI/CD pipeline with GitHub Actions"
+status: ready
+priority: high
+agent: code
+review: human-review
+created: "2026-03-02"
+tags: [ci-cd, infrastructure]
+depends_on: []
+definition_of_done:
+  - "GitHub Actions workflow runs pytest and ruff on push"
+  - "PR checks required before merge to main"
