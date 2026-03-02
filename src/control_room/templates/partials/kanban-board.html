@@ -1,0 +1,22 @@
+<div class="flex gap-4 overflow-x-auto pb-4">
+    {% set column_labels = {"backlog": "Backlog", "todo": "To Do", "in_progress": "In Progress", "review": "Review", "done": "Done"} %}
+    {% set column_colors = {"backlog": "text-cr-muted", "todo": "text-cr-amber", "in_progress": "text-blue-400", "review": "text-purple-400", "done": "text-cr-green"} %}
+
+    {% for col_name in ["backlog", "todo", "in_progress", "review", "done"] %}
+    <div class="flex-shrink-0 w-64">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-semibold {{ column_colors[col_name] }}">
+                {{ column_labels[col_name] }}
+            </h3>
+            <span class="text-xs text-cr-muted bg-cr-bg px-2 py-0.5 rounded-full">
+                {{ columns[col_name] | length }}
+            </span>
+        </div>
+        <div class="space-y-2 min-h-[200px]">
+            {% for task in columns[col_name] %}
+                {% include "partials/task-card.html" %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>

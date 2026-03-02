@@ -1,0 +1,13 @@
+id: TASK-001
+title: "Apply Agentic Engineering OS governance to control-room"
+status: in_progress
+priority: high
+agent: human
+review: human-review
+created: "2026-03-02"
+tags: [governance, dogfood]
+definition_of_done:
+  - "CLAUDE.md has Identity, Scope, Boundaries sections"
+  - "backlog/ with YAML task files exists"
+  - "CHANGELOG.md created with v0.1.0 entry"
+  - "Health score above 50%"

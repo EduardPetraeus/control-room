@@ -1,0 +1,11 @@
+id: TASK-003
+title: "Add pre-commit hooks"
+status: ready
+priority: medium
+agent: code
+review: auto-merge
+created: "2026-03-02"
+tags: [tooling, quality]
+definition_of_done:
+  - ".pre-commit-config.yaml exists with ruff hooks"
+  - "ai-standards pre-commit check passes"

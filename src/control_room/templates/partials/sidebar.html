@@ -1,0 +1,39 @@
+<nav class="hidden lg:flex flex-col w-56 bg-cr-card border-r border-cr-border p-4 space-y-1">
+    <div class="mb-6">
+        <h2 class="text-lg font-bold text-cr-green tracking-wide">Control Room</h2>
+        <p class="text-xs text-cr-muted">Solo Dev Dashboard</p>
+    </div>
+
+    <a href="/"
+       class="flex items-center gap-2 px-3 py-2 rounded text-sm {% if page == 'dashboard' %}bg-cr-border text-cr-green{% else %}text-cr-muted hover:text-cr-text hover:bg-cr-bg{% endif %}">
+        <span>&#9632;</span> Dashboard
+    </a>
+    <a href="/tasks"
+       class="flex items-center gap-2 px-3 py-2 rounded text-sm {% if page == 'tasks' %}bg-cr-border text-cr-green{% else %}text-cr-muted hover:text-cr-text hover:bg-cr-bg{% endif %}">
+        <span>&#9654;</span> Tasks
+    </a>
+    <a href="/projects"
+       class="flex items-center gap-2 px-3 py-2 rounded text-sm {% if page == 'projects' %}bg-cr-border text-cr-green{% else %}text-cr-muted hover:text-cr-text hover:bg-cr-bg{% endif %}">
+        <span>&#9679;</span> Projects
+    </a>
+    <a href="/metrics"
+       class="flex items-center gap-2 px-3 py-2 rounded text-sm {% if page == 'metrics' %}bg-cr-border text-cr-green{% else %}text-cr-muted hover:text-cr-text hover:bg-cr-bg{% endif %}">
+        <span>&#9650;</span> Metrics
+    </a>
+</nav>
+
+<!-- Mobile nav -->
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-cr-card border-t border-cr-border flex justify-around py-2 z-50">
+    <a href="/" class="text-xs {% if page == 'dashboard' %}text-cr-green{% else %}text-cr-muted{% endif %} text-center">
+        <div>&#9632;</div>Dashboard
+    </a>
+    <a href="/tasks" class="text-xs {% if page == 'tasks' %}text-cr-green{% else %}text-cr-muted{% endif %} text-center">
+        <div>&#9654;</div>Tasks
+    </a>
+    <a href="/projects" class="text-xs {% if page == 'projects' %}text-cr-green{% else %}text-cr-muted{% endif %} text-center">
+        <div>&#9679;</div>Projects
+    </a>
+    <a href="/metrics" class="text-xs {% if page == 'metrics' %}text-cr-green{% else %}text-cr-muted{% endif %} text-center">
+        <div>&#9650;</div>Metrics
+    </a>
+</nav>

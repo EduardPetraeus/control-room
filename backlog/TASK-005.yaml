@@ -1,0 +1,12 @@
+id: TASK-005
+title: "Showcase control-room in agentic-engineering docs"
+status: backlog
+priority: medium
+agent: docs
+review: human-review
+created: "2026-03-02"
+depends_on: [TASK-001, TASK-002]
+tags: [docs, showcase]
+definition_of_done:
+  - "Link from agentic-engineering docs to control-room"
+  - "Health score visible in README"

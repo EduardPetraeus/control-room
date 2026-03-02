@@ -1,0 +1,35 @@
+<div class="bg-cr-card border border-cr-border rounded-lg p-3 hover:border-opacity-60 transition-colors">
+    <div class="flex items-start justify-between gap-2">
+        <h4 class="text-sm font-medium text-cr-text leading-tight">{{ task.title }}</h4>
+        {% if task.is_blocked %}
+        <span class="flex-shrink-0 text-[10px] bg-cr-red/20 text-cr-red px-1.5 py-0.5 rounded font-medium">BLOCKED</span>
+        {% endif %}
+    </div>
+
+    <div class="mt-2 flex items-center gap-2 flex-wrap">
+        <!-- Priority badge -->
+        <span class="text-[10px] px-1.5 py-0.5 rounded
+            {% if task.priority == 'critical' %}bg-cr-red/20 text-cr-red
+            {% elif task.priority == 'high' %}bg-cr-amber/20 text-cr-amber
+            {% elif task.priority == 'medium' %}bg-blue-900/30 text-blue-400
+            {% else %}bg-gray-800 text-gray-500{% endif %}">
+            {{ task.priority }}
+        </span>
+
+        <!-- Project name -->
+        {% if task.project %}
+        <span class="text-[10px] text-cr-muted">{{ task.project }}</span>
+        {% endif %}
+
+        <!-- Source -->
+        <span class="text-[10px] text-cr-muted opacity-50">{{ task.source }}</span>
+    </div>
+
+    {% if task.tags %}
+    <div class="mt-1.5 flex gap-1 flex-wrap">
+        {% for tag in task.tags %}
+        <span class="text-[10px] bg-cr-border text-cr-muted px-1.5 py-0.5 rounded">{{ tag }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
