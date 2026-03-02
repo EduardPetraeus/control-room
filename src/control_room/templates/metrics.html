@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Metrics — Control Room{% endblock %}
+{% block content %}
+<div class="space-y-8">
+    <h1 class="text-2xl font-bold text-cr-green">Metrics</h1>
+
+    <!-- Stat cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-cr-card border border-cr-border rounded-lg p-4">
+            <p class="text-xs text-cr-muted uppercase tracking-wider">Commits (30d)</p>
+            <p class="text-3xl font-bold text-cr-green mt-1">{{ metrics.total_commits_30d }}</p>
+            <p class="text-xs text-cr-muted mt-1">{{ metrics.daily_avg_commits }}/day avg</p>
+        </div>
+        <div class="bg-cr-card border border-cr-border rounded-lg p-4">
+            <p class="text-xs text-cr-muted uppercase tracking-wider">Tests</p>
+            <p class="text-3xl font-bold {% if metrics.total_tests_passing == metrics.total_tests %}text-cr-green{% else %}text-cr-amber{% endif %} mt-1">{{ metrics.total_tests_passing }}/{{ metrics.total_tests }}</p>
+            <p class="text-xs text-cr-muted mt-1">passing across repos</p>
+        </div>
+        <div class="bg-cr-card border border-cr-border rounded-lg p-4">
+            <p class="text-xs text-cr-muted uppercase tracking-wider">Task Completion</p>
+            <p class="text-3xl font-bold text-cr-green mt-1">{{ metrics.completion_rate }}%</p>
+            <p class="text-xs text-cr-muted mt-1">{{ metrics.tasks_done }}/{{ metrics.tasks_total }} done</p>
+        </div>
+        <div class="bg-cr-card border border-cr-border rounded-lg p-4">
+            <p class="text-xs text-cr-muted uppercase tracking-wider">Active Repos</p>
+            <p class="text-3xl font-bold text-cr-green mt-1">{{ metrics.active_repos }}/{{ metrics.total_repos }}</p>
+            <p class="text-xs text-cr-muted mt-1">with commits in 30d</p>
+        </div>
+    </div>
+
+    <!-- Per-repo commit bars -->
+    <div>
+        <h2 class="text-lg font-semibold text-cr-text mb-4">Commits by Repo (30 days)</h2>
+        <div class="bg-cr-card border border-cr-border rounded-lg p-4 space-y-3">
+            {% set max_commits = projects | map(attribute='commits_30d') | max if projects else 1 %}
+            {% for project in projects | sort(attribute='commits_30d', reverse=true) %}
+            <div class="flex items-center gap-3">
+                <span class="text-xs text-cr-muted w-40 truncate">{{ project.name }}</span>
+                <div class="flex-1 h-5 bg-cr-bg rounded overflow-hidden">
+                    {% if max_commits > 0 %}
+                    <div class="h-full rounded
+                        {% if project.commits_30d > 0 %}bg-cr-green/40{% else %}bg-gray-800{% endif %}"
+                        style="width: {{ (project.commits_30d / max_commits * 100) | round }}%">
+                    </div>
+                    {% endif %}
+                </div>
+                <span class="text-xs text-cr-text w-8 text-right">{{ project.commits_30d }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Task distribution -->
+    <div>
+        <h2 class="text-lg font-semibold text-cr-text mb-4">Task Distribution</h2>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {% set task_cols = [
+                ("Backlog", metrics.tasks_backlog, "text-cr-muted"),
+                ("To Do", metrics.tasks_total - metrics.tasks_done - metrics.tasks_in_progress - metrics.tasks_backlog, "text-cr-amber"),
+                ("In Progress", metrics.tasks_in_progress, "text-blue-400"),
+                ("Review", 0, "text-purple-400"),
+                ("Done", metrics.tasks_done, "text-cr-green"),
+            ] %}
+            {% for label, count, color in task_cols %}
+            <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+                <p class="text-2xl font-bold {{ color }}">{{ count }}</p>
+                <p class="text-xs text-cr-muted mt-1">{{ label }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

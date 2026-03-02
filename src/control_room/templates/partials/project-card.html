@@ -1,0 +1,34 @@
+<div class="bg-cr-card border border-cr-border rounded-lg p-4 hover:border-opacity-60 transition-colors">
+    <div class="flex items-center justify-between mb-2">
+        <h3 class="font-semibold text-sm truncate">{{ project.name }}</h3>
+        <!-- Status dot with color -->
+        <span class="w-2.5 h-2.5 rounded-full {% if project.status_color == 'green' %}bg-cr-green{% elif project.status_color == 'amber' %}bg-cr-amber{% elif project.status_color == 'red' %}bg-cr-red{% else %}bg-gray-600{% endif %}"></span>
+    </div>
+    <p class="text-xs text-cr-muted mb-3 line-clamp-2">{{ project.description }}</p>
+    <div class="space-y-1 text-xs">
+        {% if project.branch %}
+        <div class="flex justify-between">
+            <span class="text-cr-muted">Branch</span>
+            <span class="text-cr-text font-mono">{{ project.branch }}</span>
+        </div>
+        {% endif %}
+        {% if project.version %}
+        <div class="flex justify-between">
+            <span class="text-cr-muted">Version</span>
+            <span class="text-cr-green">{{ project.version }}</span>
+        </div>
+        {% endif %}
+        {% if project.test_count is not none %}
+        <div class="flex justify-between">
+            <span class="text-cr-muted">Tests</span>
+            <span class="{% if project.test_passing == project.test_count %}text-cr-green{% else %}text-cr-amber{% endif %}">
+                {% if project.test_passing is not none %}{{ project.test_passing }}/{% endif %}{{ project.test_count }}
+            </span>
+        </div>
+        {% endif %}
+        <div class="flex justify-between">
+            <span class="text-cr-muted">Commits (30d)</span>
+            <span class="{% if project.commits_30d > 0 %}text-cr-text{% else %}text-cr-muted{% endif %}">{{ project.commits_30d }}</span>
+        </div>
+    </div>
+</div>

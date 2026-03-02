@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Projects — Control Room{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-cr-green">Projects</h1>
+        <span class="text-sm text-cr-muted">{{ projects | length }} repos</span>
+    </div>
+
+    <!-- Project table -->
+    <div class="bg-cr-card border border-cr-border rounded-lg overflow-hidden">
+        <table class="w-full">
+            <thead>
+                <tr class="border-b border-cr-border text-left">
+                    <th class="px-4 py-3 text-xs text-cr-muted uppercase tracking-wider font-medium">Project</th>
+                    <th class="px-4 py-3 text-xs text-cr-muted uppercase tracking-wider font-medium hidden md:table-cell">Branch</th>
+                    <th class="px-4 py-3 text-xs text-cr-muted uppercase tracking-wider font-medium">Version</th>
+                    <th class="px-4 py-3 text-xs text-cr-muted uppercase tracking-wider font-medium">Tests</th>
+                    <th class="px-4 py-3 text-xs text-cr-muted uppercase tracking-wider font-medium hidden md:table-cell">Commits</th>
+                    <th class="px-4 py-3 text-xs text-cr-muted uppercase tracking-wider font-medium hidden lg:table-cell">Last Commit</th>
+                    <th class="px-4 py-3 text-xs text-cr-muted uppercase tracking-wider font-medium">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-cr-border">
+                {% for project in projects %}
+                <tr class="hover:bg-cr-bg/50 transition-colors">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full flex-shrink-0
+                                {% if project.status_color == 'green' %}bg-cr-green
+                                {% elif project.status_color == 'amber' %}bg-cr-amber
+                                {% elif project.status_color == 'red' %}bg-cr-red
+                                {% else %}bg-gray-600{% endif %}"></span>
+                            <div>
+                                <p class="text-sm font-medium text-cr-text">{{ project.name }}</p>
+                                <p class="text-xs text-cr-muted hidden lg:block">{{ project.description }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 hidden md:table-cell">
+                        <span class="text-xs font-mono text-cr-text">{{ project.branch }}</span>
+                    </td>
+                    <td class="px-4 py-3">
+                        {% if project.version %}
+                        <span class="text-xs text-cr-green">{{ project.version }}</span>
+                        {% else %}
+                        <span class="text-xs text-cr-muted">&mdash;</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3">
+                        {% if project.test_count is not none %}
+                        <span class="text-xs {% if project.test_passing == project.test_count %}text-cr-green{% else %}text-cr-amber{% endif %}">
+                            {% if project.test_passing is not none %}{{ project.test_passing }}/{% endif %}{{ project.test_count }}
+                        </span>
+                        {% else %}
+                        <span class="text-xs text-cr-muted">&mdash;</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3 hidden md:table-cell">
+                        <span class="text-xs {% if project.commits_30d > 0 %}text-cr-text{% else %}text-cr-muted{% endif %}">{{ project.commits_30d }}</span>
+                    </td>
+                    <td class="px-4 py-3 hidden lg:table-cell">
+                        {% if project.last_commit_date %}
+                        <span class="text-xs text-cr-muted">{{ project.last_commit_date[:10] }}</span>
+                        {% else %}
+                        <span class="text-xs text-cr-muted">&mdash;</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="text-xs
+                            {% if project.status_color == 'green' %}text-cr-green
+                            {% elif project.status_color == 'amber' %}text-cr-amber
+                            {% elif project.status_color == 'red' %}text-cr-red
+                            {% else %}text-cr-muted{% endif %}">
+                            {{ project.status_text[:20] }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Health scores (if any) -->
+    {% set health_projects = projects | selectattr('health_score') | list %}
+    {% if health_projects %}
+    <div>
+        <h2 class="text-lg font-semibold text-cr-text mb-4">Health Scores</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {% for project in health_projects %}
+            <div class="bg-cr-card border border-cr-border rounded-lg p-3 text-center">
+                <p class="text-2xl font-bold
+                    {% set score_val = project.health_score | replace('%', '') | int %}
+                    {% if score_val >= 80 %}text-cr-green
+                    {% elif score_val >= 60 %}text-cr-amber
+                    {% else %}text-cr-red{% endif %}">
+                    {{ project.health_score }}
+                </p>
+                <p class="text-xs text-cr-muted mt-1">{{ project.name }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

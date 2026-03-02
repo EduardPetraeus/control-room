@@ -1,0 +1,48 @@
+/* Control Room — Custom styles */
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0a0f0d;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1a2f23;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2a4f33;
+}
+
+/* HTMX loading indicator */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+/* Skeleton loading animation */
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+}
+
+.skeleton {
+    animation: pulse 1.5s ease-in-out infinite;
+    background: #1a2f23;
+    border-radius: 4px;
+}
+
+/* Mobile bottom nav spacing */
+@media (max-width: 1023px) {
+    main {
+        padding-bottom: 4rem;
+    }
+}

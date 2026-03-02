@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Tasks — Control Room{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-cr-green">Tasks</h1>
+        <span class="text-sm text-cr-muted">
+            {{ columns.values() | map('length') | sum }} tasks
+        </span>
+    </div>
+
+    <!-- Kanban board with HTMX auto-refresh -->
+    <div id="kanban-board" hx-get="/partials/kanban" hx-trigger="load, every 30s" hx-swap="innerHTML">
+        <div class="flex gap-4 overflow-x-auto pb-4">
+            {% for col_name in ["backlog", "todo", "in_progress", "review", "done"] %}
+            <div class="flex-shrink-0 w-64 bg-cr-card border border-cr-border rounded-lg p-3 h-20 skeleton"></div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

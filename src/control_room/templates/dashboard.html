@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Control Room{% endblock %}
+{% block content %}
+<div class="space-y-8">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-cr-green">Dashboard</h1>
+        <span class="text-sm text-cr-muted">{{ projects | length }} repos</span>
+    </div>
+
+    <!-- Project cards with HTMX auto-refresh -->
+    <div id="project-cards" hx-get="/partials/project-cards" hx-trigger="load, every 30s" hx-swap="innerHTML">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {% for i in range(8) %}
+            <div class="bg-cr-card border border-cr-border rounded-lg p-4 h-40 skeleton"></div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Activity feed -->
+    <div>
+        <h2 class="text-lg font-semibold text-cr-text mb-4">Recent Activity</h2>
+        <div id="activity-feed" hx-get="/partials/activity-feed" hx-trigger="load, every 30s" hx-swap="innerHTML"
+             class="bg-cr-card border border-cr-border rounded-lg p-4">
+            <div class="space-y-3">
+                {% for i in range(5) %}
+                <div class="h-8 skeleton rounded"></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

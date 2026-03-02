@@ -1,0 +1,50 @@
+server:
+  host: "0.0.0.0"
+  port: 8000
+  reload: true
+  cache_ttl_seconds: 30
+
+github:
+  project_url: "https://github.com/users/EduardPetraeus/projects/1"
+  username: "EduardPetraeus"
+
+repos:
+  - name: ai-governance-framework
+    path: ~/Github repos/ai-governance-framework
+    task_dir: tasks
+    description: "Governance layer for agentic development"
+
+  - name: ai-project-management
+    path: ~/Github repos/ai-project-management
+    task_dir: tasks
+    description: "YAML task engine with critical-path CLI"
+
+  - name: ai-engineering-standards
+    path: ~/Github repos/ai-engineering-standards
+    task_dir: tasks
+    description: "Conventions, testing, git, security standards"
+
+  - name: ai-project-templates
+    path: ~/Github repos/ai-project-templates
+    task_dir: tasks
+    description: "Scaffolder for new projects"
+
+  - name: agentic-engineering
+    path: ~/Github repos/agentic-engineering
+    task_dir: tasks
+    description: "Umbrella docs and philosophy"
+
+  - name: HealthReporting
+    path: ~/Github repos/HealthReporting
+    task_dir: tasks
+    description: "Health reporting dogfood project"
+
+  - name: indie-products
+    path: ~/Github repos/indie-products
+    task_dir: tasks
+    description: "Templates and micro-SaaS products"
+
+  - name: control-room
+    path: ~/Github repos/control-room
+    task_dir: tasks
+    description: "This dashboard"
