@@ -1,0 +1,19 @@
+id: TASK-006
+title: "Design decision: local app vs hosted web dashboard"
+status: backlog
+priority: high
+agent: claude
+review: human-review
+created: "2026-03-02"
+tags: [design, architecture, decision]
+description: |
+  Evaluate whether Control Room should remain a local-only
+  application (python -m control_room) or become a hosted
+  web dashboard (deployed to a server/cloud).
+  Consider: solo dev workflow, security (git/gh access),
+  deployment complexity, mobile access, multi-device use.
+  Claude should research and recommend the best approach.
+definition_of_done:
+  - "ADR written with pros/cons for each option"
+  - "Clear recommendation with reasoning"
+  - "Owner (Claus) has approved the direction"
