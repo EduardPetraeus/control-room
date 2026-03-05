@@ -3,7 +3,7 @@
 ## Identity
 Control Room is a FastAPI + HTMX + Tailwind dashboard for solo developers managing multiple repos, tasks, and GitHub projects. Part of the Agentic Engineering OS ecosystem.
 
-- Owner: Claus Eduard Petraeus
+- Owner: See git log for author info
 - Stack: Python 3.9+, FastAPI, Jinja2, HTMX, Tailwind CSS
 - Repo: ~/Github repos/control-room/
 - Branch policy: all work on feature branches, never commit directly to main
