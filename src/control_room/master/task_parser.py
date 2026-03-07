@@ -152,7 +152,7 @@ def fetch_ready_tasks(
                 "--format",
                 "json",
                 "--limit",
-                "100",
+                "500",
             ],
             capture_output=True,
             text=True,
@@ -170,12 +170,13 @@ def fetch_ready_tasks(
             if status.lower() != "ready":
                 continue
 
-            item_type = item.get("type", "")
-            if item_type not in ("Issue", "ISSUE"):
-                continue
-
             content = item.get("content", {})
             if not isinstance(content, dict):
+                continue
+
+            # type is inside content, not top-level
+            item_type = content.get("type", "")
+            if item_type not in ("Issue", "ISSUE"):
                 continue
 
             issue_url = content.get("url", "")
@@ -183,8 +184,11 @@ def fetch_ready_tasks(
             issue_number = content.get("number", 0)
             repo_full = content.get("repository", "")
 
-            # Fetch the issue body via gh api
-            body = _fetch_issue_body(issue_url)
+            # Body is included in content from gh project item-list
+            body = content.get("body", "")
+            if not body:
+                # Fallback: fetch via gh API if body not in content
+                body = _fetch_issue_body(issue_url)
             if not body:
                 logger.warning("Could not fetch body for issue: %s", issue_url)
                 continue
