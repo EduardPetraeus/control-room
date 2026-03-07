@@ -161,6 +161,9 @@ def launch_session(
     try:
         env = os.environ.copy()
         env["MASTER_SESSION_ID"] = session_id
+        # Remove nested-session detection vars so child Claude sessions work
+        env.pop("CLAUDECODE", None)
+        env.pop("CLAUDE_CODE_SESSION", None)
 
         process = subprocess.Popen(
             cmd,
