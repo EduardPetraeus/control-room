@@ -13,8 +13,9 @@ async def costs_page(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     costs = aggregator.get_cost_summary()
     return templates.TemplateResponse(
+        request,
         "costs.html",
-        {"request": request, "costs": costs, "page": "costs"},
+        {"costs": costs, "page": "costs"},
     )
 
 
@@ -25,6 +26,7 @@ async def cost_overview_partial(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     costs = aggregator.get_cost_summary()
     return templates.TemplateResponse(
+        request,
         "partials/cost-overview.html",
-        {"request": request, "costs": costs},
+        {"costs": costs},
     )

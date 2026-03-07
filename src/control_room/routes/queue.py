@@ -13,8 +13,9 @@ async def queue_page(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     queue = aggregator.get_blocker_queue()
     return templates.TemplateResponse(
+        request,
         "queue.html",
-        {"request": request, "queue": queue, "page": "queue"},
+        {"queue": queue, "page": "queue"},
     )
 
 
@@ -25,6 +26,7 @@ async def queue_list_partial(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     queue = aggregator.get_blocker_queue()
     return templates.TemplateResponse(
+        request,
         "partials/queue-list.html",
-        {"request": request, "queue": queue},
+        {"queue": queue},
     )

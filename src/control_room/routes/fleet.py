@@ -13,8 +13,9 @@ async def fleet_page(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     fleet_status = aggregator.get_fleet_status()
     return templates.TemplateResponse(
+        request,
         "fleet.html",
-        {"request": request, "fleet": fleet_status, "page": "fleet"},
+        {"fleet": fleet_status, "page": "fleet"},
     )
 
 
@@ -25,6 +26,7 @@ async def fleet_grid_partial(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     fleet_status = aggregator.get_fleet_status()
     return templates.TemplateResponse(
+        request,
         "partials/fleet-grid.html",
-        {"request": request, "fleet": fleet_status},
+        {"fleet": fleet_status},
     )

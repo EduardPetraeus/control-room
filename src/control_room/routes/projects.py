@@ -13,6 +13,7 @@ async def projects_page(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     projects = aggregator.get_all_projects()
     return templates.TemplateResponse(
+        request,
         "projects.html",
-        {"request": request, "projects": projects, "page": "projects"},
+        {"projects": projects, "page": "projects"},
     )

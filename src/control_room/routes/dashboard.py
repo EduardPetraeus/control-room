@@ -13,8 +13,9 @@ async def dashboard(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     projects = aggregator.get_all_projects()
     return templates.TemplateResponse(
+        request,
         "dashboard.html",
-        {"request": request, "projects": projects, "page": "dashboard"},
+        {"projects": projects, "page": "dashboard"},
     )
 
 
@@ -25,8 +26,9 @@ async def project_cards_partial(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     projects = aggregator.get_all_projects()
     return templates.TemplateResponse(
+        request,
         "partials/project-cards.html",
-        {"request": request, "projects": projects},
+        {"projects": projects},
     )
 
 
@@ -37,6 +39,7 @@ async def activity_feed_partial(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     events = aggregator.get_activity_feed()
     return templates.TemplateResponse(
+        request,
         "partials/activity-feed.html",
-        {"request": request, "events": events},
+        {"events": events},
     )

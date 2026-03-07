@@ -42,6 +42,7 @@ async def metrics_page(request: Request) -> HTMLResponse:
     )
 
     return templates.TemplateResponse(
+        request,
         "metrics.html",
-        {"request": request, "metrics": metrics, "projects": projects, "page": "metrics"},
+        {"metrics": metrics, "projects": projects, "page": "metrics"},
     )

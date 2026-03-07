@@ -13,8 +13,9 @@ async def tasks_page(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     columns = aggregator.get_tasks_by_column()
     return templates.TemplateResponse(
+        request,
         "tasks.html",
-        {"request": request, "columns": columns, "page": "tasks"},
+        {"columns": columns, "page": "tasks"},
     )
 
 
@@ -25,6 +26,7 @@ async def kanban_partial(request: Request) -> HTMLResponse:
     aggregator = request.app.state.aggregator
     columns = aggregator.get_tasks_by_column()
     return templates.TemplateResponse(
+        request,
         "partials/kanban-board.html",
-        {"request": request, "columns": columns},
+        {"columns": columns},
     )
