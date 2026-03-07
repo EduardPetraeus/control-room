@@ -48,3 +48,14 @@ repos:
     path: ~/Github repos/control-room
     task_dir: tasks
     description: "This dashboard"
+
+master_agent:
+  tick_interval: 60
+  max_concurrent: 2
+  session_timeout: 1800
+  repos_base: ~/Github repos
+  project_number: 1
+  project_owner: EduardPetraeus
+  review_on_completion: true
+  notify_on_completion: true
+  auto_handover: true

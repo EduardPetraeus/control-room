@@ -29,6 +29,7 @@ dev = [
 
 [project.scripts]
 control-room = "control_room.__main__:main"
+master-agent = "control_room.master.__main__:cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/control_room"]
